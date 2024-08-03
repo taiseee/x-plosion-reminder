@@ -1,0 +1,28 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: taiseee
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: reminder
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: x-plosion-reminder
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: ap-northeast-1
+
+functions:
+  rateHandler:
+    handler: handler.run
+    layers:
+      - arn:aws:lambda:ap-northeast-1:770693421928:layer:Klayers-p312-requests:7
+      - arn:aws:lambda:ap-northeast-1:770693421928:layer:Klayers-p312-beautifulsoup4:2
+    events:
+      - schedule:
+          method: scheduler
+          rate:
+            - cron(00 09 * * ? *)
+          timezone: Asia/Tokyo
+    environment:
+      WEBHOOK_URL: ${env:WEBHOOK_URL}
